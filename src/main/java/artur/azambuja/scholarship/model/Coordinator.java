@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import java.util.*;
+
 @Entity
 @Data
 @Table(name = "Coordinators")
@@ -22,4 +24,6 @@ public class Coordinator {
     @Email(message = "email cannot be empty")
     @Column(name = "email", unique = true, nullable = false)
     private String email;
+    @ManyToMany(mappedBy = "coordinators")
+    private List<Classroom> classroom;
 }

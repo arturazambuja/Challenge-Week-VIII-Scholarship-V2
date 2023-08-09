@@ -22,4 +22,7 @@ public class Student {
     @Email(message = "email cannot be empty")
     @Column(name = "email", unique = true, nullable = false)
     private String email;
+    @ManyToOne
+    @JoinColumn(name = "id_classroom")
+    private Classroom classroom;
 }

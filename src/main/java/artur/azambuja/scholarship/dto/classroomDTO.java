@@ -1,4 +1,4 @@
 package artur.azambuja.scholarship.dto;
 
-public class classDTO {
+public class classroomDTO {
 }

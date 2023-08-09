@@ -1,4 +1,4 @@
 package artur.azambuja.scholarship.controller;
 
-public class classController {
+public class classroomController {
 }

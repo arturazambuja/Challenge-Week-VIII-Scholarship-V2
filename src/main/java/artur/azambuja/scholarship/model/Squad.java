@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Data
 public class Squad {
@@ -14,9 +16,11 @@ public class Squad {
     @Column(name = "id_squad", unique = true, nullable = false)
     private long idSquad;
     @NotBlank(message = "Squad must have a name")
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
     @NotEmpty(message = "Member cannot be empty")
     @Column(name = "members", nullable = false)
     private int members;
+    @ManyToMany(mappedBy = "squads")
+    private List<Classroom> classroom;
 }

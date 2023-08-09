@@ -1,4 +1,4 @@
 package artur.azambuja.scholarship.service;
 
-public class classService {
+public class classroomService {
 }

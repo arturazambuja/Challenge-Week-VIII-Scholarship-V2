@@ -5,7 +5,9 @@ import artur.azambuja.scholarship.dto.scrumMaster.scrumMasterResponseDTO;
 import artur.azambuja.scholarship.model.ScrumMaster;
 import artur.azambuja.scholarship.service.serviceClass;
 import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
 
+@Service
 public class scrumMasterService extends serviceClass {
     public scrumMasterService(ModelMapper modelMapper){
         super(modelMapper);

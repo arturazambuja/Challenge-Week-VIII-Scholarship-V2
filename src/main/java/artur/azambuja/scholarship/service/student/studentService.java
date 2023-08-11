@@ -5,7 +5,9 @@ import artur.azambuja.scholarship.dto.student.studentResponseDTO;
 import artur.azambuja.scholarship.model.Student;
 import artur.azambuja.scholarship.service.serviceClass;
 import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
 
+@Service
 public class studentService extends serviceClass {
     public studentService(ModelMapper modelMapper){
         super(modelMapper);

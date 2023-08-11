@@ -17,6 +17,9 @@ public class Classroom implements Serializable {
     @NotBlank(message = "Room cannot be empty")
     @Column(name = "classroom", unique = true, nullable = false)
     private String classroom;
+    @NotBlank(message = "The class must have at least one Coordinator")
+    @Column(name = "coordinator", unique = true, nullable = false)
+    private String coordinator;
     @NotBlank(message = "The class must have at least one Scrum Master")
     @Column(name = "scrum_master", unique = true, nullable = false)
     private String scrumMaster;

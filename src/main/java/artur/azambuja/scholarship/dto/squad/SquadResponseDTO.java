@@ -5,9 +5,9 @@ import lombok.Data;
 
 import java.util.List;
 @Data
-public class squadRequestDTO {
-    private long idSquad;
+public class SquadResponseDTO {
     private String name;
     private int members;
     private List<Classroom> classroom;
+
 }

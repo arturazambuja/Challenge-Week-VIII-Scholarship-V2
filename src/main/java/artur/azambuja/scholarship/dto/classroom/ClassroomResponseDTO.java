@@ -5,8 +5,7 @@ import lombok.Data;
 
 import java.util.List;
 @Data
-public class classroomRequestDTO {
-    private long idClassroom;
+public class ClassroomResponseDTO {
     private String classroom;
     private String scrumMaster;
     private String instructor;

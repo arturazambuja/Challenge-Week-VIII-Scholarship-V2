@@ -1,13 +1,12 @@
-package artur.azambuja.scholarship.dto.instructor;
+package artur.azambuja.scholarship.dto.student;
 
 import artur.azambuja.scholarship.model.Classroom;
 import lombok.Data;
 
-import java.util.List;
 @Data
-public class instructorResponseDTO {
+public class StudentResponseDTO {
     private String firstName;
     private String lastName;
     private String email;
-    private List<Classroom> classroom;
+    private Classroom classroom;
 }

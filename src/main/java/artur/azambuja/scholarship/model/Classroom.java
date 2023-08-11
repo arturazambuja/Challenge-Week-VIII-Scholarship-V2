@@ -59,4 +59,9 @@ public class Classroom implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "id_squad")
     )
     private List<Squad> squads;
+
+    public void setCoordinator(Coordinator coordinator) {
+    }
+    public void setScrumMaster(ScrumMaster scrumMaster) {
+    }
 }

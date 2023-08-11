@@ -1,12 +1,13 @@
-package artur.azambuja.scholarship.dto.student;
+package artur.azambuja.scholarship.dto.scrumMaster;
 
 import artur.azambuja.scholarship.model.Classroom;
 import lombok.Data;
 
+import java.util.List;
 @Data
-public class studentResponseDTO {
+public class ScrumMasterResponseDTO {
     private String firstName;
     private String lastName;
     private String email;
-    private Classroom classroom;
+    private List<Classroom> classroom;
 }

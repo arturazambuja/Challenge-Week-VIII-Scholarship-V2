@@ -25,4 +25,6 @@ public class Student {
     @ManyToOne
     @JoinColumn(name = "id_classroom")
     private Classroom classroom;
+    @ManyToOne
+    private Squad squad;
 }

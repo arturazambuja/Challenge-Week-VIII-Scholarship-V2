@@ -1,7 +1,6 @@
 package artur.azambuja.scholarship.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
@@ -18,9 +17,11 @@ public class Squad {
     @NotBlank(message = "Squad must have a name")
     @Column(name = "name", unique = true, nullable = false)
     private String name;
-    @NotEmpty(message = "Member cannot be empty")
-    @Column(name = "members", nullable = false)
-    private int members;
-    @ManyToMany(mappedBy = "squads")
-    private List<Classroom> classroom;
+    @NotEmpty(message = "number cannot be empty")
+    @Column(name = "number", nullable = false)
+    private int number;
+    @ManyToOne
+    private Classroom classroom;
+    @OneToMany(mappedBy = "squad")
+    private List<Student> students;
 }

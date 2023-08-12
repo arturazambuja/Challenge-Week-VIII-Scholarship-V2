@@ -8,6 +8,6 @@ import java.util.List;
 public class SquadRequestDTO {
     private long idSquad;
     private String name;
-    private int members;
+    private int number;
     private List<Classroom> classroom;
 }

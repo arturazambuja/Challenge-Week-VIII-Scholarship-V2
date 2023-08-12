@@ -4,6 +4,7 @@ import artur.azambuja.scholarship.dto.classroom.ClassroomRequestDTO;
 import artur.azambuja.scholarship.dto.classroom.ClassroomResponseDTO;
 import artur.azambuja.scholarship.exceptions.Instructor.InsufficientInstructorsException;
 import artur.azambuja.scholarship.exceptions.classroom.ClassroomNotFoundException;
+import artur.azambuja.scholarship.exceptions.classroom.InsufficientInternalException;
 import artur.azambuja.scholarship.model.*;
 import artur.azambuja.scholarship.repository.classroom.ClassroomRepository;
 import artur.azambuja.scholarship.repository.coordinator.CoordinatorRepository;
@@ -18,8 +19,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.naming.InsufficientResourcesException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ClassroomService extends serviceClass {
@@ -61,8 +62,8 @@ public class ClassroomService extends serviceClass {
 
         if (coordinator == null || scrumMaster == null || instructors.size() < 3) {
             try {
-                throw new InsufficientResourcesException("Insufficient resources to create classroom");
-            } catch (InsufficientResourcesException e) {
+                throw new InsufficientInternalException("Insufficient resources to create classroom");
+            } catch (InsufficientInternalException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -91,7 +92,7 @@ public class ClassroomService extends serviceClass {
     }
     public void startClassroom(Long classroomId) throws ClassroomNotFoundException {
         Classroom classroom = classroomRepository.findById(classroomId)
-                .orElseThrow(() -> new ClassroomNotFoundException("Classroom not found"));
+                .orElseThrow(() -> new ClassroomNotFoundException("Classroom not found with this id"));
 
         classroom.setStatus("started");
         classroomRepository.save(classroom);
@@ -99,5 +100,35 @@ public class ClassroomService extends serviceClass {
         List<Student> students = studentService.getStudentsByClassroomId(classroom.getIdClassroom());
         squadService.createAndDistributeSquads(classroom, students);
     }
+    public void finishClassroom(Long classroomId) throws ClassroomNotFoundException {
+        Classroom classroom = classroomRepository.findById(classroomId)
+                .orElseThrow(() -> new ClassroomNotFoundException("Classroom not found with this id"));
 
+        classroom.setStatus("finished");
+        classroomRepository.save(classroom);
+    }
+    public List<ClassroomResponseDTO> getAllClassrooms() {
+        List<Classroom> classrooms = classroomRepository.findAll();
+        return classrooms.stream()
+                .map(this::convertClassroomToResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public ClassroomResponseDTO getClassroomById(Long classroomId) throws ClassroomNotFoundException {
+        Classroom classroom = classroomRepository.findById(classroomId)
+                .orElseThrow(() -> new ClassroomNotFoundException("Classroom not found with this id"));
+        return convertClassroomToResponseDTO(classroom);
+    }
+
+    public ClassroomResponseDTO updateClassroom(Long classroomId, ClassroomRequestDTO requestDTO) throws ClassroomNotFoundException {
+        Classroom classroom = classroomRepository.findById(classroomId)
+                .orElseThrow(() -> new ClassroomNotFoundException("Classroom not found with this id"));
+
+        classroom.setClassroom(requestDTO.getClassroom());
+        classroom.setStatus(requestDTO.getStatus());
+        classroom.setStudents(requestDTO.getStudents());
+
+        classroomRepository.save(classroom);
+        return convertClassroomToResponseDTO(classroom);
+    }
 }

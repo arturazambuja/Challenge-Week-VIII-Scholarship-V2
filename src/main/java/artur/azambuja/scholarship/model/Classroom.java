@@ -64,4 +64,11 @@ public class Classroom implements Serializable {
     }
     public void setScrumMaster(ScrumMaster scrumMaster) {
     }
+    public boolean isAcceptingNewStudents() {
+        if (!"waiting".equalsIgnoreCase(status)) {
+            return false;
+        }
+        int maxStudents = 30;
+        return students.size() < maxStudents;
+    }
 }

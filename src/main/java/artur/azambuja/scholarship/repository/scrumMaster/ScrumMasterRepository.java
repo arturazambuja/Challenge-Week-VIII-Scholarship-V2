@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface ScrumMasterRepository extends JpaRepository<ScrumMaster, Long> {
     @Query("SELECT s.idScrumMaster FROM ScrumMaster s")
     ScrumMaster findAnyScrumMaster();
+
+    boolean existsByEmail(String email);
 }

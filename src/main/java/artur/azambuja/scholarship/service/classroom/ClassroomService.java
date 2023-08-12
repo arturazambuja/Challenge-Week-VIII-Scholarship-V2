@@ -2,10 +2,9 @@ package artur.azambuja.scholarship.service.classroom;
 
 import artur.azambuja.scholarship.dto.classroom.ClassroomRequestDTO;
 import artur.azambuja.scholarship.dto.classroom.ClassroomResponseDTO;
-import artur.azambuja.scholarship.model.Classroom;
-import artur.azambuja.scholarship.model.Coordinator;
-import artur.azambuja.scholarship.model.Instructor;
-import artur.azambuja.scholarship.model.ScrumMaster;
+import artur.azambuja.scholarship.exceptions.Instructor.InsufficientInstructorsException;
+import artur.azambuja.scholarship.exceptions.classroom.ClassroomNotFoundException;
+import artur.azambuja.scholarship.model.*;
 import artur.azambuja.scholarship.repository.classroom.ClassroomRepository;
 import artur.azambuja.scholarship.repository.coordinator.CoordinatorRepository;
 import artur.azambuja.scholarship.repository.instructor.InstructorRepository;
@@ -13,12 +12,13 @@ import artur.azambuja.scholarship.repository.scrumMaster.ScrumMasterRepository;
 import artur.azambuja.scholarship.repository.squad.SquadRepository;
 import artur.azambuja.scholarship.repository.student.StudentRepository;
 import artur.azambuja.scholarship.service.serviceClass;
+import artur.azambuja.scholarship.service.squad.SquadService;
+import artur.azambuja.scholarship.service.student.StudentService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.naming.InsufficientResourcesException;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -36,8 +36,10 @@ public class ClassroomService extends serviceClass {
     private final ScrumMasterRepository scrumMasterRepository;
     private final SquadRepository squadRepository;
     private final StudentRepository studentRepository;
+    private final SquadService squadService;
+    private final StudentService studentService;
     @Autowired
-    public ClassroomService(ModelMapper modelMapper, ClassroomRepository classroomRepository, CoordinatorRepository coordinatorRepository, InstructorRepository instructorRepository, ScrumMasterRepository scrumMasterRepository, SquadRepository squadRepository, StudentRepository studentRepository){
+    public ClassroomService(ModelMapper modelMapper, ClassroomRepository classroomRepository, CoordinatorRepository coordinatorRepository, InstructorRepository instructorRepository, ScrumMasterRepository scrumMasterRepository, SquadRepository squadRepository, StudentRepository studentRepository, SquadService squadService, StudentService studentService){
         super(modelMapper);
         this.classroomRepository = classroomRepository;
         this.coordinatorRepository = coordinatorRepository;
@@ -45,15 +47,17 @@ public class ClassroomService extends serviceClass {
         this.scrumMasterRepository = scrumMasterRepository;
         this.squadRepository = squadRepository;
         this.studentRepository = studentRepository;
+        this.squadService = squadService;
+        this.studentService = studentService;
     }
-    public ClassroomResponseDTO createClassroom(ClassroomRequestDTO requestDTO) {
+    public ClassroomResponseDTO createClassroom(ClassroomRequestDTO requestDTO) throws InsufficientInstructorsException {
 
         Classroom classroom = new Classroom();
         classroom.setClassroom(requestDTO.getClassroom());
 
-        Coordinator coordinator = findAvailableCoordinator();
-        ScrumMaster scrumMaster = findAvailableScrumMaster();
-        List<Instructor> instructors = findAvailableInstructors(3);
+        Coordinator coordinator = findCoordinator();
+        ScrumMaster scrumMaster = findScrumMaster();
+        List<Instructor> instructors = findInstructors(3);
 
         if (coordinator == null || scrumMaster == null || instructors.size() < 3) {
             try {
@@ -71,22 +75,29 @@ public class ClassroomService extends serviceClass {
 
         return convertClassroomToResponseDTO(savedClassroom);
     }
-    private Coordinator findAvailableCoordinator(){
+    private Coordinator findCoordinator(){
         return coordinatorRepository.findAnyCoordinator();
     }
-    private ScrumMaster findAvailableScrumMaster(){
+    private ScrumMaster findScrumMaster(){
         return scrumMasterRepository.findAnyScrumMaster();
     }
-    private List<Instructor> findAvailableInstructors(int count){
+    private List<Instructor> findInstructors(int count) throws InsufficientInstructorsException {
         List<Instructor> instructors = instructorRepository.findAnyInstructors(count);
 
         if(instructors.size() < count) {
-            try {
-                throw new InsufficientResourcesException("Insufficient number of instructors");
-            } catch (InsufficientResourcesException e) {
-                throw new RuntimeException(e);
-            }
+            throw new InsufficientInstructorsException("Insufficient number of instructors");
         }
         return instructors;
     }
+    public void startClassroom(Long classroomId) throws ClassroomNotFoundException {
+        Classroom classroom = classroomRepository.findById(classroomId)
+                .orElseThrow(() -> new ClassroomNotFoundException("Classroom not found"));
+
+        classroom.setStatus("started");
+        classroomRepository.save(classroom);
+
+        List<Student> students = studentService.getStudentsByClassroomId(classroom.getIdClassroom());
+        squadService.createAndDistributeSquads(classroom, students);
+    }
+
 }

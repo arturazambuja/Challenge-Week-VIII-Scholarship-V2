@@ -11,4 +11,6 @@ import java.util.List;
 public interface CoordinatorRepository extends JpaRepository<Coordinator, Long> {
     @Query("SELECT c.idCoordinator FROM Coordinator c")
     Coordinator findAnyCoordinator();
+
+    boolean existsByEmail(String email);
 }

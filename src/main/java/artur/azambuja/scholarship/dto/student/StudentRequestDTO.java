@@ -10,4 +10,8 @@ public class StudentRequestDTO {
     private String lastName;
     private String email;
     private Classroom classroom;
+
+    public Long getIdClassroom() {
+        return getIdClassroom();
+    }
 }

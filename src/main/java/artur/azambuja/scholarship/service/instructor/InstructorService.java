@@ -4,7 +4,9 @@ import artur.azambuja.scholarship.dto.instructor.InstructorRequestDTO;
 import artur.azambuja.scholarship.dto.instructor.InstructorResponseDTO;
 import artur.azambuja.scholarship.exceptions.EmailAlreadyRegistredException;
 import artur.azambuja.scholarship.exceptions.Instructor.InstructorNotFoundException;
+import artur.azambuja.scholarship.model.Classroom;
 import artur.azambuja.scholarship.model.Instructor;
+import artur.azambuja.scholarship.repository.classroom.ClassroomRepository;
 import artur.azambuja.scholarship.repository.instructor.InstructorRepository;
 import artur.azambuja.scholarship.service.serviceClass;
 import org.modelmapper.ModelMapper;
@@ -22,9 +24,11 @@ public class InstructorService extends serviceClass {
         return modelMapper.map(dto, Instructor.class);
     }
     private final InstructorRepository instructorRepository;
-    public InstructorService(ModelMapper modelMapper, InstructorRepository instructorRepository){
+    private final ClassroomRepository classroomRepository;
+    public InstructorService(ModelMapper modelMapper, InstructorRepository instructorRepository, ClassroomRepository classroomRepository){
         super(modelMapper);
         this.instructorRepository = instructorRepository;
+        this.classroomRepository = classroomRepository;
     }
     public InstructorResponseDTO createInstructor(InstructorRequestDTO requestDTO) throws EmailAlreadyRegistredException {
         if (instructorRepository.existsByEmail(requestDTO.getEmail())) {
@@ -63,5 +67,14 @@ public class InstructorService extends serviceClass {
 
         instructorRepository.save(instructor);
         return convertInstructorToResponseDTO(instructor);
+    }
+    public void deleteInstructor(Long instructorId) throws InstructorNotFoundException {
+        Instructor instructor = instructorRepository.findById(instructorId)
+                .orElseThrow(() -> new InstructorNotFoundException("Instructor not found with this id"));
+
+        List<Classroom> classrooms = classroomRepository.findByInstructors(instructor);
+        classrooms.forEach(classroom -> classroom.getInstructors().remove(instructor));
+
+        instructorRepository.delete(instructor);
     }
 }

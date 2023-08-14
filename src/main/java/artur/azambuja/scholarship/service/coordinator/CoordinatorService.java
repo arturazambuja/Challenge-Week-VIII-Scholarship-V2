@@ -30,7 +30,7 @@ public class CoordinatorService extends serviceClass {
         this.coordinatorRepository = coordinatorRepository;
         this.classroomRepository = classroomRepository;
     }
-    public CoordinatorResponseDTO createInstructor(CoordinatorRequestDTO requestDTO) throws EmailAlreadyRegistredException {
+    public CoordinatorResponseDTO createCoordinator(CoordinatorRequestDTO requestDTO) throws EmailAlreadyRegistredException {
         if (coordinatorRepository.existsByEmail(requestDTO.getEmail())) {
             throw new EmailAlreadyRegistredException("Coordinator with the same email already exists");
         }

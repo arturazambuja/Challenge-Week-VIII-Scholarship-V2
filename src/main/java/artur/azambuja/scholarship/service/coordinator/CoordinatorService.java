@@ -4,7 +4,9 @@ import artur.azambuja.scholarship.dto.coordinator.CoordinatorRequestDTO;
 import artur.azambuja.scholarship.dto.coordinator.CoordinatorResponseDTO;
 import artur.azambuja.scholarship.exceptions.EmailAlreadyRegistredException;
 import artur.azambuja.scholarship.exceptions.coordinator.CoordinatorNotFoundException;
+import artur.azambuja.scholarship.model.Classroom;
 import artur.azambuja.scholarship.model.Coordinator;
+import artur.azambuja.scholarship.repository.classroom.ClassroomRepository;
 import artur.azambuja.scholarship.repository.coordinator.CoordinatorRepository;
 import artur.azambuja.scholarship.service.serviceClass;
 import org.modelmapper.ModelMapper;
@@ -22,9 +24,11 @@ public class CoordinatorService extends serviceClass {
         return modelMapper.map(dto, Coordinator.class);
     }
     private final CoordinatorRepository coordinatorRepository;
-    public CoordinatorService(ModelMapper modelMapper, CoordinatorRepository coordinatorRepository){
+    private final ClassroomRepository classroomRepository;
+    public CoordinatorService(ModelMapper modelMapper, CoordinatorRepository coordinatorRepository, ClassroomRepository classroomRepository){
         super(modelMapper);
         this.coordinatorRepository = coordinatorRepository;
+        this.classroomRepository = classroomRepository;
     }
     public CoordinatorResponseDTO createInstructor(CoordinatorRequestDTO requestDTO) throws EmailAlreadyRegistredException {
         if (coordinatorRepository.existsByEmail(requestDTO.getEmail())) {
@@ -63,5 +67,14 @@ public class CoordinatorService extends serviceClass {
 
         coordinatorRepository.save(coordinator);
         return convertCoordinatorToResponseDTO(coordinator);
+    }
+    public void deleteCoordinator(Long coordinatorId) throws CoordinatorNotFoundException {
+        Coordinator coordinator = coordinatorRepository.findById(coordinatorId)
+                .orElseThrow(() -> new CoordinatorNotFoundException("Coordinator not found with this id"));
+
+        List<Classroom> classrooms = classroomRepository.findByCoordinators(coordinator);
+        classrooms.forEach(classroom -> classroom.getCoordinators().remove(coordinator));
+
+        coordinatorRepository.delete(coordinator);
     }
 }

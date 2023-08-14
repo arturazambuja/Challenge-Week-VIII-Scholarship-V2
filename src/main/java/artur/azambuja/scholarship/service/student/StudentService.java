@@ -6,8 +6,10 @@ import artur.azambuja.scholarship.exceptions.classroom.ClassroomFullException;
 import artur.azambuja.scholarship.exceptions.classroom.ClassroomNotFoundException;
 import artur.azambuja.scholarship.exceptions.student.StudentNotFoundException;
 import artur.azambuja.scholarship.model.Classroom;
+import artur.azambuja.scholarship.model.Squad;
 import artur.azambuja.scholarship.model.Student;
 import artur.azambuja.scholarship.repository.classroom.ClassroomRepository;
+import artur.azambuja.scholarship.repository.squad.SquadRepository;
 import artur.azambuja.scholarship.repository.student.StudentRepository;
 import artur.azambuja.scholarship.service.serviceClass;
 import org.modelmapper.ModelMapper;
@@ -18,10 +20,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class StudentService extends serviceClass {
-    public StudentService(ModelMapper modelMapper, StudentRepository studentRepository, ClassroomRepository classroomRepository) {
+    public StudentService(ModelMapper modelMapper, StudentRepository studentRepository, ClassroomRepository classroomRepository, SquadRepository squadRepository) {
         super(modelMapper);
         this.studentRepository = studentRepository;
         this.classroomRepository = classroomRepository;
+        this.squadRepository = squadRepository;
     }
     public StudentResponseDTO convertStudentToResponseDTO(Student student) {
         return modelMapper.map(student, StudentResponseDTO.class);
@@ -31,6 +34,7 @@ public class StudentService extends serviceClass {
     }
     private final StudentRepository studentRepository;
     private final ClassroomRepository classroomRepository;
+    private final SquadRepository squadRepository;
     public StudentResponseDTO createStudent(StudentRequestDTO requestDTO) throws ClassroomFullException, ClassroomNotFoundException {
 
         Classroom classroom = classroomRepository.findById(requestDTO.getIdClassroom())
@@ -76,5 +80,23 @@ public class StudentService extends serviceClass {
 
         studentRepository.save(student);
         return convertStudentToResponseDTO(student);
+    }
+    public void deleteStudent(Long studentId) throws StudentNotFoundException {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found with this id"));
+
+        if (student.getClassroom() != null) {
+            Classroom classroom = student.getClassroom();
+            classroom.getStudents().remove(student);
+            classroomRepository.save(classroom);
+        }
+
+        if (student.getSquad() != null) {
+            Squad squad = student.getSquad();
+            squad.getStudents().remove(student);
+            squadRepository.save(squad);
+        }
+
+        studentRepository.delete(student);
     }
 }

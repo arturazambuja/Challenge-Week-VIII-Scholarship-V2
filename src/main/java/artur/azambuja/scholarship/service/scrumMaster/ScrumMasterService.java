@@ -4,7 +4,9 @@ import artur.azambuja.scholarship.dto.scrumMaster.ScrumMasterRequestDTO;
 import artur.azambuja.scholarship.dto.scrumMaster.ScrumMasterResponseDTO;
 import artur.azambuja.scholarship.exceptions.EmailAlreadyRegistredException;
 import artur.azambuja.scholarship.exceptions.scrumMaster.ScrumMasterNotFoundException;
+import artur.azambuja.scholarship.model.Classroom;
 import artur.azambuja.scholarship.model.ScrumMaster;
+import artur.azambuja.scholarship.repository.classroom.ClassroomRepository;
 import artur.azambuja.scholarship.repository.scrumMaster.ScrumMasterRepository;
 import artur.azambuja.scholarship.service.serviceClass;
 import org.modelmapper.ModelMapper;
@@ -22,9 +24,11 @@ public class ScrumMasterService extends serviceClass {
         return modelMapper.map(dto, ScrumMaster.class);
     }
     private final ScrumMasterRepository scrumMasterRepository;
-    public ScrumMasterService(ModelMapper modelMapper, ScrumMasterRepository scrumMasterRepository){
+    private final ClassroomRepository classroomRepository;
+    public ScrumMasterService(ModelMapper modelMapper, ScrumMasterRepository scrumMasterRepository, ClassroomRepository classroomRepository){
         super(modelMapper);
         this.scrumMasterRepository = scrumMasterRepository;
+        this.classroomRepository = classroomRepository;
     }
     public ScrumMasterResponseDTO createScrumMaster(ScrumMasterRequestDTO requestDTO) throws EmailAlreadyRegistredException {
         if (scrumMasterRepository.existsByEmail(requestDTO.getEmail())) {
@@ -64,4 +68,14 @@ public class ScrumMasterService extends serviceClass {
         scrumMasterRepository.save(scrumMaster);
         return convertScrumMasterToResponseDTO(scrumMaster);
     }
+    public void deleteScrumMaster(Long scrumMasterId) throws ScrumMasterNotFoundException {
+        ScrumMaster scrumMaster = scrumMasterRepository.findById(scrumMasterId)
+                .orElseThrow(() -> new ScrumMasterNotFoundException("Scrum Master not found with this id"));
+
+        List<Classroom> classrooms = classroomRepository.findByScrumMasters(scrumMaster);
+        classrooms.forEach(classroom -> classroom.getScrumMasters().remove(scrumMaster));
+
+        scrumMasterRepository.delete(scrumMaster);
+    }
+
 }

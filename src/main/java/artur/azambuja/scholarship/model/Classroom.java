@@ -14,10 +14,9 @@ public class Classroom implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_classroom", unique = true, nullable = false)
     private long idClassroom;
-    @NotBlank(message = "Room cannot be empty")
+    @NotBlank(message = "classroom cannot be empty")
     @Column(name = "classroom", unique = true, nullable = false)
     private String classroom;
-    @NotBlank(message = "The class must have at least one Coordinator")
     @Column(name = "coordinator", unique = true, nullable = false)
     private String coordinator;
     @NotBlank(message = "The class must have at least one Scrum Master")

@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SquadService extends serviceClass {
@@ -50,15 +51,19 @@ public class SquadService extends serviceClass {
             currentSquad = (currentSquad % numSquads) + 1;
         }
     }
-    public List<Squad> getAllSquads() {
-        return squadRepository.findAll();
+    public List<SquadResponseDTO> getAllSquads() {
+        List<Squad> squads = squadRepository.findAll();
+        return squads.stream()
+                .map(this::convertSquadToResponseDTO)
+                .collect(Collectors.toList());
     }
 
-    public Squad getSquadById(Long squadId) throws SquadNotFoundException {
-        return squadRepository.findById(squadId)
+    public SquadResponseDTO getSquadById(Long squadId) throws SquadNotFoundException {
+        Squad squad = squadRepository.findById(squadId)
                 .orElseThrow(() -> new SquadNotFoundException("Squad not found with this id"));
+        return convertSquadToResponseDTO(squad);
     }
-    public Squad updateSquad(Long squadId, SquadRequestDTO requestDTO) throws SquadNotFoundException {
+    public SquadResponseDTO updateSquad(Long squadId, SquadRequestDTO requestDTO) throws SquadNotFoundException {
         Squad squad = squadRepository.findById(squadId)
                 .orElseThrow(() -> new SquadNotFoundException("Squad not found with this id"));
 
@@ -66,7 +71,7 @@ public class SquadService extends serviceClass {
         squad.setNumber(requestDTO.getNumber());
         squadRepository.save(squad);
 
-        return squad;
+        return convertSquadToResponseDTO(squad);
     }
     public void deleteSquad(Long squadId) throws SquadNotFoundException {
         Squad squad = squadRepository.findById(squadId)

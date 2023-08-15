@@ -1,12 +1,17 @@
 package artur.azambuja.scholarship.dto.classroom;
 
 import artur.azambuja.scholarship.model.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClassroomResponseDTO {
+    private long idClassroom;
     private String classroom;
+    private String coordinator;
     private String scrumMaster;
     private String instructor;
     private String status;

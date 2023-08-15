@@ -1,14 +1,18 @@
 package artur.azambuja.scholarship.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "Coordinators")
 public class Coordinator {
     @Id
@@ -24,6 +28,7 @@ public class Coordinator {
     @Email(message = "email cannot be empty")
     @Column(name = "email", unique = true, nullable = false)
     private String email;
+    @JsonBackReference
     @ManyToMany(mappedBy = "coordinators")
     private List<Classroom> classroom;
 }

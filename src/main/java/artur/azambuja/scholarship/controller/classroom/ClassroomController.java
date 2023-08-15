@@ -4,6 +4,7 @@ import artur.azambuja.scholarship.dto.classroom.ClassroomRequestDTO;
 import artur.azambuja.scholarship.dto.classroom.ClassroomResponseDTO;
 import artur.azambuja.scholarship.exceptions.Instructor.InsufficientInstructorsException;
 import artur.azambuja.scholarship.exceptions.classroom.ClassroomNotFoundException;
+import artur.azambuja.scholarship.exceptions.student.InsufficientStudentsException;
 import artur.azambuja.scholarship.service.classroom.ClassroomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class ClassroomController {
         return classroomService.getClassroomById(idClassroom);
     }
     @PostMapping
-    public ClassroomResponseDTO createClassroom(@RequestBody ClassroomRequestDTO requestDTO) throws InsufficientInstructorsException {
+    public ResponseEntity<ClassroomResponseDTO> createClassroom(@RequestBody ClassroomRequestDTO requestDTO) throws InsufficientInstructorsException, InsufficientStudentsException {
         return classroomService.createClassroom(requestDTO);
     }
     @PostMapping("/{idClassroom}/start")

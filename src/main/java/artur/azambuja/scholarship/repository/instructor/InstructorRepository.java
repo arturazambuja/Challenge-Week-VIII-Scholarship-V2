@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface InstructorRepository extends JpaRepository<Instructor, Long> {
-    @Query("SELECT i.idInstructor FROM Instructor i")
+    @Query("SELECT i FROM Instructor i")
     List<Instructor> findAnyInstructors(int count);
 
     boolean existsByEmail(String email);

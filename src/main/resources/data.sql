@@ -1,20 +1,20 @@
-INSERT IGNORE INTO db_scholarship.coordinators  (first_name, last_name, email)
+INSERT IGNORE INTO coordinators  (first_name, last_name, email)
 VALUES
     ('John', 'Smith', 'john.smith@example.com'),
     ('Emily', 'Johnson', 'emily.johnson@example.com'),
     ('Michael', 'Williams', 'michael.williams@example.com');
-INSERT IGNORE INTO db_scholarship.scrum_masters (first_name, last_name, email)
+INSERT IGNORE INTO scrum_masters (first_name, last_name, email)
 VALUES
     ('Sarah', 'Davis', 'sarah.davis@example.com'),
     ('Kevin', 'Martinez', 'kevin.martinez@example.com'),
     ('Jessica', 'Brown', 'jessica.brown@example.com');
-INSERT IGNORE INTO db_scholarship.instructors (first_name, last_name, email)
+INSERT IGNORE INTO instructors (first_name, last_name, email)
 VALUES
     ('Matthew', 'Anderson', 'matthew.anderson@example.com'),
     ('Laura', 'Taylor', 'laura.taylor@example.com'),
     ('Robert', 'Miller', 'robert.miller@example.com');
 
-INSERT IGNORE INTO db_scholarship.students (first_name, last_name, email)
+INSERT IGNORE INTO students (first_name, last_name, email)
 VALUES
     ('Christopher', 'Wilson', 'christopher.wilson@example.com'),
     ('Amanda', 'Rodriguez', 'amanda.rodriguez@example.com'),

@@ -34,8 +34,8 @@ public class CoordinatorController {
         return coordinatorService.createCoordinator(requestDTO);
     }
     @PutMapping("/{idCoordinator}")
-    public CoordinatorResponseDTO updateCoordinator(@PathVariable Long idCoordiantor, @RequestBody CoordinatorRequestDTO requestDTO) throws CoordinatorNotFoundException {
-        return coordinatorService.updateCoordinator(idCoordiantor, requestDTO);
+    public CoordinatorResponseDTO updateCoordinator(@PathVariable Long idCoordinator, @RequestBody CoordinatorRequestDTO requestDTO) throws CoordinatorNotFoundException {
+        return coordinatorService.updateCoordinator(idCoordinator, requestDTO);
     }
     @DeleteMapping("/{idCoordinator}")
     public void deleteCoordinator(@PathVariable Long idCoordinator) throws CoordinatorNotFoundException {

@@ -1,14 +1,18 @@
 package artur.azambuja.scholarship.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "Instructors")
 public class Instructor {
     @Id
@@ -25,5 +29,6 @@ public class Instructor {
     @Column(name = "email", unique = true, nullable = false)
     private String email;
     @ManyToMany(mappedBy = "instructors")
+    @JsonBackReference
     private List<Classroom> classroom;
 }

@@ -4,6 +4,7 @@ import artur.azambuja.scholarship.dto.student.StudentRequestDTO;
 import artur.azambuja.scholarship.dto.student.StudentResponseDTO;
 import artur.azambuja.scholarship.exceptions.classroom.ClassroomFullException;
 import artur.azambuja.scholarship.exceptions.classroom.ClassroomNotFoundException;
+import artur.azambuja.scholarship.exceptions.student.InsufficientStudentsException;
 import artur.azambuja.scholarship.exceptions.student.StudentNotFoundException;
 import artur.azambuja.scholarship.model.Classroom;
 import artur.azambuja.scholarship.model.Squad;
@@ -37,18 +38,10 @@ public class StudentService extends serviceClass {
     private final SquadRepository squadRepository;
     public StudentResponseDTO createStudent(StudentRequestDTO requestDTO) throws ClassroomFullException, ClassroomNotFoundException {
 
-        Classroom classroom = classroomRepository.findById(requestDTO.getIdClassroom())
-                .orElseThrow(() -> new ClassroomNotFoundException("Classroom not found with this id"));
-
-        if (!classroom.isAcceptingNewStudents()) {
-            throw new ClassroomFullException("Classroom is not accepting new students");
-        }
-
         Student student = new Student();
         student.setFirstName(requestDTO.getFirstName());
         student.setLastName(requestDTO.getLastName());
         student.setEmail(requestDTO.getEmail());
-        student.setClassroom(classroom);
 
         Student savedStudent = studentRepository.save(student);
 
@@ -98,5 +91,13 @@ public class StudentService extends serviceClass {
         }
 
         studentRepository.delete(student);
+    }
+    public List<Student> findAvailableStudentsForClassroom(Classroom classroom, int count) throws InsufficientStudentsException {
+        List<Student> availableStudents = studentRepository.findAvailableStudentsForClassroom(classroom);
+
+        if (availableStudents.size() > 30 || availableStudents.size() < 15) {
+            throw new InsufficientStudentsException("Not enough available students for enrollment");        }
+
+        return availableStudents;
     }
 }

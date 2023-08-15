@@ -1,30 +1,27 @@
 package artur.azambuja.scholarship.model;
 
+import artur.azambuja.scholarship.dto.classroom.ClassroomResponseDTO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.List;
 @Entity
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Getter
+@Setter
 @Table(name = "classroom")
-public class Classroom implements Serializable {
+public class Classroom extends ClassroomResponseDTO implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_classroom", unique = true, nullable = false)
     private long idClassroom;
-    @NotBlank(message = "classroom cannot be empty")
-    @Column(name = "classroom", unique = true, nullable = false)
+    @Column(name = "classroom")
     private String classroom;
-    @Column(name = "coordinator", unique = true, nullable = false)
-    private String coordinator;
-    @NotBlank(message = "The class must have at least one Scrum Master")
-    @Column(name = "scrum_master", unique = true, nullable = false)
-    private String scrumMaster;
-    @NotBlank(message = "the class must have at least three instructors")
-    @Column(name = "instructor", nullable = false)
-    private String instructor;
     @NotBlank(message = "Status cannot be empty")
     @Column(name = "status", nullable = false)
     private String status;
@@ -58,16 +55,8 @@ public class Classroom implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "id_squad")
     )
     private List<Squad> squads;
-
     public void setCoordinator(Coordinator coordinator) {
     }
     public void setScrumMaster(ScrumMaster scrumMaster) {
-    }
-    public boolean isAcceptingNewStudents() {
-        if (!"waiting".equalsIgnoreCase(status)) {
-            return false;
-        }
-        int maxStudents = 30;
-        return students.size() < maxStudents;
     }
 }

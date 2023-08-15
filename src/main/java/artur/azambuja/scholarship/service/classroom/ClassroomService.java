@@ -4,7 +4,7 @@ import artur.azambuja.scholarship.dto.classroom.ClassroomRequestDTO;
 import artur.azambuja.scholarship.dto.classroom.ClassroomResponseDTO;
 import artur.azambuja.scholarship.exceptions.Instructor.InsufficientInstructorsException;
 import artur.azambuja.scholarship.exceptions.classroom.ClassroomNotFoundException;
-import artur.azambuja.scholarship.exceptions.classroom.InsufficientInternalException;
+import artur.azambuja.scholarship.exceptions.student.InsufficientStudentsException;
 import artur.azambuja.scholarship.model.*;
 import artur.azambuja.scholarship.repository.classroom.ClassroomRepository;
 import artur.azambuja.scholarship.repository.coordinator.CoordinatorRepository;
@@ -17,8 +17,11 @@ import artur.azambuja.scholarship.service.squad.SquadService;
 import artur.azambuja.scholarship.service.student.StudentService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +30,7 @@ public class ClassroomService extends serviceClass {
     public ClassroomResponseDTO convertClassroomToResponseDTO(Classroom classroom) {
         return modelMapper.map(classroom, ClassroomResponseDTO.class);
     }
-    public Classroom convertClassroomRequestDTOToEntity(ClassroomRequestDTO dto) {
+    public Classroom convertClassroomRequestDTOToEntity(Classroom dto) {
         return modelMapper.map(dto, Classroom.class);
     }
 
@@ -51,30 +54,39 @@ public class ClassroomService extends serviceClass {
         this.squadService = squadService;
         this.studentService = studentService;
     }
-    public ClassroomResponseDTO createClassroom(ClassroomRequestDTO requestDTO) throws InsufficientInstructorsException {
+    public ResponseEntity<ClassroomResponseDTO> createClassroom(ClassroomRequestDTO requestDTO) throws InsufficientStudentsException, InsufficientInstructorsException {
 
         Classroom classroom = new Classroom();
         classroom.setClassroom(requestDTO.getClassroom());
+        classroom.setStatus(requestDTO.getStatus());
 
         Coordinator coordinator = findCoordinator();
         ScrumMaster scrumMaster = findScrumMaster();
         List<Instructor> instructors = findInstructors(3);
 
-        if (coordinator == null || scrumMaster == null || instructors.size() < 3) {
-            try {
-                throw new InsufficientInternalException("Insufficient resources to create classroom");
-            } catch (InsufficientInternalException e) {
-                throw new RuntimeException(e);
-            }
+        if (coordinator == null || scrumMaster == null || instructors.size() < 3){
+            throw new InsufficientInstructorsException("Insufficient resources to create classroom");
         }
 
         classroom.setCoordinator(coordinator);
         classroom.setScrumMaster(scrumMaster);
         classroom.setInstructors(instructors);
 
-        Classroom savedClassroom = classroomRepository.save(classroom);
 
-        return convertClassroomToResponseDTO(savedClassroom);
+        List<Student> studentsToEnroll = studentService.findAvailableStudentsForClassroom(classroom, 30);
+
+        if (studentsToEnroll.size() < 15) {
+            throw new InsufficientStudentsException("Not enough students available");
+        }
+
+        List<Student> availableStudents = filterStudentsNotInAnyClassroom(studentsToEnroll);
+
+        if (availableStudents.size() < 15) {
+            throw new InsufficientStudentsException("Not enough students for enrollment");
+        }
+
+        Classroom savedClassroom = classroomRepository.save(classroom);
+        return ResponseEntity.status(HttpStatus.CREATED).body(convertClassroomToResponseDTO(savedClassroom));
     }
     private Coordinator findCoordinator(){
         return coordinatorRepository.findAnyCoordinator();
@@ -89,6 +101,28 @@ public class ClassroomService extends serviceClass {
             throw new InsufficientInstructorsException("Insufficient number of instructors");
         }
         return instructors;
+    }
+    private List<Student> filterStudentsNotInAnyClassroom(List<Student> students) {
+        List<Student> availableStudents = new ArrayList<>();
+
+        for (Student student : students) {
+            if (student.getClassroom() == null) {
+                availableStudents.add(student);
+            }
+        }
+        return availableStudents;
+    }
+    private void distributeStudentsToClassroom(Classroom classroom, List<Student> students) {
+        int maxStudentsPerClassroom = 30;
+
+        for (Student student : students) {
+            if (classroom.getStudents().size() >= maxStudentsPerClassroom) {
+                break;
+            }
+
+            student.setClassroom(classroom);
+            studentRepository.save(student);
+        }
     }
     public void startClassroom(Long classroomId) throws ClassroomNotFoundException {
         Classroom classroom = classroomRepository.findById(classroomId)
@@ -125,7 +159,6 @@ public class ClassroomService extends serviceClass {
                 .orElseThrow(() -> new ClassroomNotFoundException("Classroom not found with this id"));
 
         classroom.setClassroom(requestDTO.getClassroom());
-        classroom.setStatus(requestDTO.getStatus());
         classroom.setStudents(requestDTO.getStudents());
 
         classroomRepository.save(classroom);

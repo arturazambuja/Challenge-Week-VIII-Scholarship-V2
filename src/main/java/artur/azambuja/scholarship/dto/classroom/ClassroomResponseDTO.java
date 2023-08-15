@@ -11,9 +11,6 @@ import java.util.List;
 public class ClassroomResponseDTO {
     private long idClassroom;
     private String classroom;
-    private String coordinator;
-    private String scrumMaster;
-    private String instructor;
     private String status;
     private List<Student> students;
     private List<Coordinator> coordinators;

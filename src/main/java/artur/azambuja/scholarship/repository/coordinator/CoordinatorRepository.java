@@ -9,8 +9,8 @@ import java.util.List;
 
 @Repository
 public interface CoordinatorRepository extends JpaRepository<Coordinator, Long> {
-    @Query("SELECT c FROM Coordinator c ORDER BY RAND() LIMIT 1")
-    Coordinator findAnyCoordinator();
+    @Query("SELECT c FROM Coordinator c")
+    List<Coordinator> findAnyCoordinator();
 
     boolean existsByEmail(String email);
 }

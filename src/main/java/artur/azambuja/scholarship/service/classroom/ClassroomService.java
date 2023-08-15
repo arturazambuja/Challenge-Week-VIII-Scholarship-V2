@@ -60,16 +60,16 @@ public class ClassroomService extends serviceClass {
         classroom.setClassroom(requestDTO.getClassroom());
         classroom.setStatus(requestDTO.getStatus());
 
-        Coordinator coordinator = findCoordinator();
-        ScrumMaster scrumMaster = findScrumMaster();
+        List<Coordinator> coordinators = findCoordinators();
+        List<ScrumMaster> scrumMasters = findScrumMasters();
         List<Instructor> instructors = findInstructors(3);
 
-        if (coordinator == null || scrumMaster == null || instructors.size() < 3){
+        if (coordinators == null || scrumMasters.size() < 1 || instructors.size() < 3){
             throw new InsufficientInstructorsException("Insufficient resources to create classroom");
         }
 
-        classroom.setCoordinator(coordinator);
-        classroom.setScrumMaster(scrumMaster);
+        classroom.setCoordinators(coordinators);
+        classroom.setScrumMasters(scrumMasters);
         classroom.setInstructors(instructors);
 
 
@@ -88,10 +88,10 @@ public class ClassroomService extends serviceClass {
         Classroom savedClassroom = classroomRepository.save(classroom);
         return ResponseEntity.status(HttpStatus.CREATED).body(convertClassroomToResponseDTO(savedClassroom));
     }
-    private Coordinator findCoordinator(){
+    private List<Coordinator> findCoordinators(){
         return coordinatorRepository.findAnyCoordinator();
     }
-    private ScrumMaster findScrumMaster(){
+    private List<ScrumMaster> findScrumMasters(){
         return scrumMasterRepository.findAnyScrumMaster();
     }
     private List<Instructor> findInstructors(int count) throws InsufficientInstructorsException {
@@ -111,18 +111,6 @@ public class ClassroomService extends serviceClass {
             }
         }
         return availableStudents;
-    }
-    private void distributeStudentsToClassroom(Classroom classroom, List<Student> students) {
-        int maxStudentsPerClassroom = 30;
-
-        for (Student student : students) {
-            if (classroom.getStudents().size() >= maxStudentsPerClassroom) {
-                break;
-            }
-
-            student.setClassroom(classroom);
-            studentRepository.save(student);
-        }
     }
     public void startClassroom(Long classroomId) throws ClassroomNotFoundException {
         Classroom classroom = classroomRepository.findById(classroomId)

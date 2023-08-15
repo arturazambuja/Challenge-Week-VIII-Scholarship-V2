@@ -1,12 +1,14 @@
 package artur.azambuja.scholarship.dto.coordinator;
 
 import artur.azambuja.scholarship.model.Classroom;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CoordinatorRequestDTO {
-    private long idCoordinator;
     private String firstName;
     private String lastName;
     private String email;

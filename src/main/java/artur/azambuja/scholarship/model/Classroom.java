@@ -1,7 +1,6 @@
 package artur.azambuja.scholarship.model;
 
 import artur.azambuja.scholarship.dto.classroom.ClassroomResponseDTO;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -55,8 +54,4 @@ public class Classroom extends ClassroomResponseDTO implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "id_squad")
     )
     private List<Squad> squads;
-    public void setCoordinator(Coordinator coordinator) {
-    }
-    public void setScrumMaster(ScrumMaster scrumMaster) {
-    }
 }

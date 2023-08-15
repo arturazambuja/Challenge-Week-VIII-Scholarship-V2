@@ -13,9 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ClassroomRequestDTO {
     private String classroom;
-    private String coordinator;
-    private String scrumMaster;
-    private String instructor;
     private String status;
     private List<Student> students;
     private List<Coordinator> coordinators;

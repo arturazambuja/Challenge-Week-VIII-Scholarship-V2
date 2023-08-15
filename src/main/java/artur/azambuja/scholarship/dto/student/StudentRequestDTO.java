@@ -1,11 +1,13 @@
 package artur.azambuja.scholarship.dto.student;
 
 import artur.azambuja.scholarship.model.Classroom;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class StudentRequestDTO {
-    private long idStudent;
     private String firstName;
     private String lastName;
     private String email;

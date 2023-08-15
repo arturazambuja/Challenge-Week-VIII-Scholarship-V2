@@ -1,11 +1,15 @@
 package artur.azambuja.scholarship.dto.squad;
 
 import artur.azambuja.scholarship.model.Classroom;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SquadResponseDTO {
+    private long idSquad;
     private String name;
     private int members;
     private List<Classroom> classroom;

@@ -26,7 +26,7 @@ public class Student {
     @Email(message = "email cannot be empty")
     @Column(name = "email", unique = true, nullable = false)
     private String email;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_classroom")
     @JsonBackReference
     private Classroom classroom;

@@ -26,7 +26,7 @@ public class Squad {
     private int number;
     @ManyToOne
     private Classroom classroom;
-    @OneToMany(mappedBy = "squad")
+    @OneToMany
     @JsonBackReference
     private List<Student> students;
 }

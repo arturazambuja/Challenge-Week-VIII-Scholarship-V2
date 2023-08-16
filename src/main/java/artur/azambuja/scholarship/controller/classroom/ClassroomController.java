@@ -28,7 +28,7 @@ public class ClassroomController {
         return classroomService.getAllClassrooms();
     }
     @GetMapping("/{idClassroom}")
-    public ClassroomResponseDTO getClassroomById(@PathVariable Long idClassroom) throws ClassroomNotFoundException {
+    public ResponseEntity<ClassroomResponseDTO> getClassroomById(@PathVariable Long idClassroom) throws ClassroomNotFoundException {
         return classroomService.getClassroomById(idClassroom);
     }
     @PostMapping

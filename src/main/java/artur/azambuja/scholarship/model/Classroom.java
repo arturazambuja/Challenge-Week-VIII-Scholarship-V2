@@ -24,7 +24,7 @@ public class Classroom extends ClassroomResponseDTO implements Serializable {
     @NotBlank(message = "Status cannot be empty")
     @Column(name = "status", nullable = false)
     private String status;
-    @OneToMany(mappedBy = "classroom")
+    @OneToMany
     private List<Student> students;
     @ManyToMany
     @JoinTable(

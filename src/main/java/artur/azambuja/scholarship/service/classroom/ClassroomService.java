@@ -85,6 +85,8 @@ public class ClassroomService extends serviceClass {
             throw new InsufficientStudentsException("Not enough students for enrollment");
         }
 
+        classroom.setStudents(studentsToEnroll);
+
         Classroom savedClassroom = classroomRepository.save(classroom);
         return ResponseEntity.status(HttpStatus.CREATED).body(convertClassroomToResponseDTO(savedClassroom));
     }
@@ -136,10 +138,10 @@ public class ClassroomService extends serviceClass {
                 .collect(Collectors.toList());
     }
 
-    public ClassroomResponseDTO getClassroomById(Long classroomId) throws ClassroomNotFoundException {
+    public ResponseEntity<ClassroomResponseDTO> getClassroomById(Long classroomId) throws ClassroomNotFoundException {
         Classroom classroom = classroomRepository.findById(classroomId)
                 .orElseThrow(() -> new ClassroomNotFoundException("Classroom not found with this id"));
-        return convertClassroomToResponseDTO(classroom);
+        return ResponseEntity.status(HttpStatus.CREATED).body(convertClassroomToResponseDTO(classroom));
     }
 
     public ClassroomResponseDTO updateClassroom(Long classroomId, ClassroomRequestDTO requestDTO) throws ClassroomNotFoundException {

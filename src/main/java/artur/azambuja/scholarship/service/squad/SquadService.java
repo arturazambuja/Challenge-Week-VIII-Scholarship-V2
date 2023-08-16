@@ -36,8 +36,9 @@ public class SquadService extends serviceClass {
 
         for (int i = 1; i <= numSquads; i++) {
             Squad squad = new Squad();
-            squad.setNumber(i);
+            squad.setName("Squad #" + i);
             squad.setClassroom(classroom);
+            squad.setNumber(i);
 
             squadRepository.save(squad);
         }

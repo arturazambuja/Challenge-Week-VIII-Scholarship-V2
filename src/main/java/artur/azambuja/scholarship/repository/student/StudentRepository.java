@@ -17,5 +17,5 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findByClassroom_IdClassroom(Long classroomId);
     List<Student> findBySquad(Squad squad);
     @Query("SELECT s FROM Student s WHERE s.classroom IS NULL")
-    List<Student> findAvailableStudentsForClassroom(Classroom classroom);
+    List<Student> findAvailableStudentsForClassroom();
 }

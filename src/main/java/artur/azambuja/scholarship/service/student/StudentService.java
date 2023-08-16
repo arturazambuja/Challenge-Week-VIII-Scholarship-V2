@@ -92,8 +92,8 @@ public class StudentService extends serviceClass {
 
         studentRepository.delete(student);
     }
-    public List<Student> findAvailableStudentsForClassroom(Classroom classroom, int count) throws InsufficientStudentsException {
-        List<Student> availableStudents = studentRepository.findAvailableStudentsForClassroom(classroom);
+    public List<Student> findAvailableStudentsForClassroom() throws InsufficientStudentsException {
+        List<Student> availableStudents = studentRepository.findAvailableStudentsForClassroom();
 
         if (availableStudents.size() > 30 || availableStudents.size() < 15) {
             throw new InsufficientStudentsException("Not enough available students for enrollment");        }

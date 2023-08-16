@@ -1,6 +1,7 @@
 package artur.azambuja.scholarship.model;
 
 import artur.azambuja.scholarship.dto.classroom.ClassroomResponseDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -24,7 +25,7 @@ public class Classroom extends ClassroomResponseDTO implements Serializable {
     @NotBlank(message = "Status cannot be empty")
     @Column(name = "status", nullable = false)
     private String status;
-    @OneToMany
+    @OneToMany(mappedBy = "classroom")
     private List<Student> students;
     @ManyToMany
     @JoinTable(

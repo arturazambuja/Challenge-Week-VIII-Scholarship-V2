@@ -20,8 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,19 +71,16 @@ public class ClassroomService extends serviceClass {
         classroom.setInstructors(instructors);
 
 
-        List<Student> studentsToEnroll = studentService.findAvailableStudentsForClassroom(classroom, 30);
+        List<Student> studentsToEnroll = studentService.findAvailableStudentsForClassroom();
 
         if (studentsToEnroll.size() < 15) {
             throw new InsufficientStudentsException("Not enough students available");
         }
 
-        List<Student> availableStudents = filterStudentsNotInAnyClassroom(studentsToEnroll);
-
-        if (availableStudents.size() < 15) {
-            throw new InsufficientStudentsException("Not enough students for enrollment");
-        }
-
         classroom.setStudents(studentsToEnroll);
+        for (Student student : studentsToEnroll) {
+            student.setClassroom(classroom);
+        }
 
         Classroom savedClassroom = classroomRepository.save(classroom);
         return ResponseEntity.status(HttpStatus.CREATED).body(convertClassroomToResponseDTO(savedClassroom));
@@ -104,25 +99,15 @@ public class ClassroomService extends serviceClass {
         }
         return instructors;
     }
-    private List<Student> filterStudentsNotInAnyClassroom(List<Student> students) {
-        List<Student> availableStudents = new ArrayList<>();
-
-        for (Student student : students) {
-            if (student.getClassroom() == null) {
-                availableStudents.add(student);
-            }
-        }
-        return availableStudents;
-    }
     public void startClassroom(Long classroomId) throws ClassroomNotFoundException {
         Classroom classroom = classroomRepository.findById(classroomId)
                 .orElseThrow(() -> new ClassroomNotFoundException("Classroom not found with this id"));
 
         classroom.setStatus("started");
-        classroomRepository.save(classroom);
 
         List<Student> students = studentService.getStudentsByClassroomId(classroom.getIdClassroom());
         squadService.createAndDistributeSquads(classroom, students);
+        classroomRepository.save(classroom);
     }
     public void finishClassroom(Long classroomId) throws ClassroomNotFoundException {
         Classroom classroom = classroomRepository.findById(classroomId)

@@ -1,7 +1,6 @@
 package artur.azambuja.scholarship.dto.squad;
 
 import artur.azambuja.scholarship.model.Classroom;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.util.List;

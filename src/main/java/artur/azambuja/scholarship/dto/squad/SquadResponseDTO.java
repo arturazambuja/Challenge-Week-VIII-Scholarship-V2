@@ -12,7 +12,8 @@ import java.util.List;
 public class SquadResponseDTO {
     private long idSquad;
     private String name;
-    private int members;
+    @JsonIgnore
+    private int number;
     @JsonIgnore
     private List<Classroom> classroom;
 

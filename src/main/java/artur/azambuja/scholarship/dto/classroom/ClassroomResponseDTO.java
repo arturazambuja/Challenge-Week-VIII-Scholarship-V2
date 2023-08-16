@@ -1,6 +1,7 @@
 package artur.azambuja.scholarship.dto.classroom;
 
 import artur.azambuja.scholarship.model.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.util.List;
@@ -16,5 +17,6 @@ public class ClassroomResponseDTO {
     private List<Coordinator> coordinators;
     private List<Instructor> instructors;
     private List<ScrumMaster> scrumMasters;
+    @JsonIgnore
     private List<Squad> squads;
 }

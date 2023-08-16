@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 import java.util.List;
@@ -24,10 +23,12 @@ public class Squad {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
     @Column(name = "number", nullable = false)
+    @JsonIgnore
     private int number;
     @ManyToOne
     @JsonBackReference
     private Classroom classroom;
     @OneToMany
+    @JsonIgnore
     private List<Student> students;
 }

@@ -1,7 +1,6 @@
 package artur.azambuja.scholarship.model;
 
 import artur.azambuja.scholarship.dto.classroom.ClassroomResponseDTO;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;

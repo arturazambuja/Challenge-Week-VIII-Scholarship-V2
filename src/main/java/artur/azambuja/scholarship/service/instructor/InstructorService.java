@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class InstructorService extends serviceClass {
+
     public InstructorResponseDTO convertInstructorToResponseDTO(Instructor instructor) {
         return modelMapper.map(instructor, InstructorResponseDTO.class);
     }

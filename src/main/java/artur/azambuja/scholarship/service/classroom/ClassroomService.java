@@ -28,7 +28,7 @@ public class ClassroomService extends serviceClass {
     public ClassroomResponseDTO convertClassroomToResponseDTO(Classroom classroom) {
         return modelMapper.map(classroom, ClassroomResponseDTO.class);
     }
-    public Classroom convertClassroomRequestDTOToEntity(Classroom dto) {
+    public Classroom convertClassroomRequestDTOToEntity(ClassroomRequestDTO dto) {
         return modelMapper.map(dto, Classroom.class);
     }
 
@@ -85,13 +85,13 @@ public class ClassroomService extends serviceClass {
         Classroom savedClassroom = classroomRepository.save(classroom);
         return ResponseEntity.status(HttpStatus.CREATED).body(convertClassroomToResponseDTO(savedClassroom));
     }
-    private List<Coordinator> findCoordinators(){
+    protected List<Coordinator> findCoordinators(){
         return coordinatorRepository.findAnyCoordinator();
     }
-    private List<ScrumMaster> findScrumMasters(){
+    public List<ScrumMaster> findScrumMasters(){
         return scrumMasterRepository.findAnyScrumMaster();
     }
-    private List<Instructor> findInstructors(int count) throws InsufficientInstructorsException {
+    public List<Instructor> findInstructors(int count) throws InsufficientInstructorsException {
         List<Instructor> instructors = instructorRepository.findAnyInstructors(count);
 
         if(instructors.size() < count) {

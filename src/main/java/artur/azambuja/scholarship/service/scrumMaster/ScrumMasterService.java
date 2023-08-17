@@ -2,10 +2,12 @@ package artur.azambuja.scholarship.service.scrumMaster;
 
 import artur.azambuja.scholarship.dto.scrumMaster.ScrumMasterRequestDTO;
 import artur.azambuja.scholarship.dto.scrumMaster.ScrumMasterResponseDTO;
+import artur.azambuja.scholarship.dto.squad.SquadResponseDTO;
 import artur.azambuja.scholarship.exceptions.EmailAlreadyRegistredException;
 import artur.azambuja.scholarship.exceptions.scrumMaster.ScrumMasterNotFoundException;
 import artur.azambuja.scholarship.model.Classroom;
 import artur.azambuja.scholarship.model.ScrumMaster;
+import artur.azambuja.scholarship.model.Squad;
 import artur.azambuja.scholarship.repository.classroom.ClassroomRepository;
 import artur.azambuja.scholarship.repository.scrumMaster.ScrumMasterRepository;
 import artur.azambuja.scholarship.service.serviceClass;
@@ -77,5 +79,4 @@ public class ScrumMasterService extends serviceClass {
 
         scrumMasterRepository.delete(scrumMaster);
     }
-
 }
